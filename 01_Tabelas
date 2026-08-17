@@ -1,0 +1,77 @@
+create table cliente (
+id integer generated always AS identity  primary key,
+nome varchar (100) not NULL
+);
+
+create table produto (
+id integer generated always as identity primary key,
+nome varchar (100) not null,
+preco numeric(10,2) not null,
+
+constraint chk_preco 
+check (preco >= 0)
+);
+
+create table estoque (
+id integer generated always as identity primary key,
+produto_id integer,
+qt_estoque integer,
+
+constraint uq_estoque_produto
+unique (produto_id),
+
+
+constraint fk_estoque_produto
+foreign key (produto_id)
+references produto(id),
+
+constraint chk_qt_estoque
+check (qt_estoque >= 0)
+);
+
+
+create table venda (
+id integer generated always as identity primary key,
+cliente_id integer not null,
+valor_vendido numeric (10,2) not null,
+data timestamp not null default current_timestamp,
+status varchar (100),
+
+constraint fk_cliente
+foreign key (cliente_id)
+references cliente(id),
+
+constraint chk_status
+check (status in  ('PENDENTE', 'PAGA', 'CANCELADA')),
+
+constraint chk_valor_vendido
+check (valor_vendido > 0)
+);
+
+
+create table Itens_venda (
+id integer generated always as identity primary key,
+venda_id integer not null,
+produto_id integer not null,
+quantidade int not null,
+preco_unitario numeric (10,2) not null,
+
+constraint uq_venda_produto 
+unique (venda_id, produto_id),
+
+constraint fk_venda_id 
+foreign key (venda_id)
+references venda(id),
+
+constraint fk_produto_id
+foreign key (produto_id)
+references produto(id),
+
+constraint chk_preco_unitario
+check (preco_unitario > 0),
+
+constraint chk_quantidade
+check (quantidade > 0)
+
+);
+
