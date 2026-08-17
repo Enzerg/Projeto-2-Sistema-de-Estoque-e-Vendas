@@ -1,0 +1,31 @@
+create or replace function fn_baixa_estoque()
+RETURNS trigger as $$
+declare
+	estoque_atual integer;
+	begin
+
+	select qt_estoque
+	into estoque_atual
+	from estoque
+	where produto_id = New.produto_id;
+
+	if estoque_atual < New_quantidade then
+	raise exception 'estoque insuficiente';
+	end if;
+
+	update estoque 
+	set qt_estoque = qt_estoque - New.quantidade
+	where produto_id = New.produto_id;
+
+	RETURN NEW;
+
+end;
+
+$$ language plpgsql;
+
+create trigger trg_baixa_estoque
+before insert 
+on itens_venda
+for each row
+execute function fn_baixa_estoque();
+
