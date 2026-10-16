@@ -1,6 +1,7 @@
 create table cliente (
 id integer generated always AS identity  primary key,
 nome varchar (100) not NULL
+cpf char(11) not null
 );
 
 create table produto (
